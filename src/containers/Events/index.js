@@ -13,19 +13,20 @@ const EventList = () => {
   const { data, error } = useData();
   const [type, setType] = useState();
   const [currentPage, setCurrentPage] = useState(1);
-  const filteredEvents = (
-    (!type
-      ? data?.events
-      : data?.events) || []
-  ).filter((event, index) => {
-    if (
-      (currentPage - 1) * PER_PAGE <= index &&
-      PER_PAGE * currentPage > index
-    ) {
-      return true;
-    }
-    return false;
-  });
+  const filteredEvents =
+      // Modification : Ajout d'un filtre pour sélectionner les événements en fonction du type choisi par l'utilisateur.
+      // Si aucun type n'est sélectionné (type est null ou undefined), on affiche tous les événements.
+      // Sinon, on applique un filtre qui ne garde que les événements dont le type correspond à la sélection.
+      ((!type ? data?.events : data?.events.filter((event) => event.type === type)) || []).filter(
+          (event, index) => {
+              // Filtrage supplémentaire pour gérer la pagination (par page, selon PER_PAGE)
+              if ((currentPage - 1) * PER_PAGE <= index && PER_PAGE * currentPage > index) {
+                  return true
+              }
+              return false
+          }
+      )
+
   const changeType = (evtType) => {
     setCurrentPage(1);
     setType(evtType);
